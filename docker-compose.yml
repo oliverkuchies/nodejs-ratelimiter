@@ -1,0 +1,58 @@
+# These containers are established for local testing.
+# In production or staging, we would have RDS instances available for use.
+# We would define the configuration in param / secret store for use and
+# The container would inherit the credentials instead of using the .env file
+
+version: '3.8'
+services:
+    mysql:
+        container_name: ratelimiter-mysql
+        image: mysql:8.2
+        platform: linux/x86_64
+        restart: always
+        environment:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: 'ratelimiter'
+          host_cache_size: 0
+        ports:
+          - '3434:3306'
+        networks:
+          - default
+        volumes:
+          - ./tmp:/var/lib/mysql/
+        healthcheck:
+          test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+      
+    redis:
+        container_name: ratelimiter-redis
+        platform: linux/x86_64
+        image: redis:6.0
+        restart: always
+        ports:
+        - "6565:6379"
+        networks:
+          - default
+    ratelimiter:
+        image: node:20
+        container_name: ratelimiter
+        working_dir: /app
+        ports:
+          - "3000:3000"
+        volumes:
+            - ./:/app
+        networks:
+          - default
+        depends_on:
+            mysql:
+              condition: service_healthy
+        command: bash ./src/run.sh
+  
+networks:
+  default:
+    driver: bridge
+    
+volumes:
+    mysql_data:

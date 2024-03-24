@@ -1,0 +1,14 @@
+{
+    "rateLimits": [
+        {
+            "requestsAllowed": 5,
+            "routeRegex": "/api/*",
+            "windowSeconds": 60
+        },
+        {
+            "requestsAllowed": 1,
+            "routeRegex": "/admin/*",
+            "windowSeconds": 60
+        }
+    ]
+}

@@ -39,3 +39,26 @@ server.
 
 The server will be running on port 3000.
 
+If a user wishes to create an override over an existing rate limit, they can do so by adding a new rate limit to the 
+
+rate entity table with the same routeRegex as the existing rate limit. The new rate limit will override the existing.
+You can also add an expiry to the rate limit, which will cause the rate limit to expire after the expiry time.
+
+In the case that a developer wishes to configure rules for different groups, i.e. authenticated or unauthenticated 
+users, they can use the group column to associate a route with different users.
+This would then require minor adjustments around the middleware to pass the group of the user and apply the rate limit.
+
+
+## Getting started
+
+`make start` - This will start the MySQL instance, Redis server and the NodeJS 
+server.
+
+Please note, there will be a slight delay while the server waits for MySQL to boot the first time around.
+
+
+TODO : Improve the rate limiter to support more than ip address, i.e. utilise their browser user-agent, referring 
+domains etc. IP alone may be too restrictive to those in the home, but also allow for VPN abuse.
+
+TODO : Add more coverage around middleware.
+

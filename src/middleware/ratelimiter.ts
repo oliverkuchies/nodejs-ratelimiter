@@ -1,38 +1,44 @@
-import {NextFunction, Request, request, Response} from "express";
+import { NextFunction, Response } from "express";
 import RateModel from "../data/models/rate-model";
 import RateLimiterService from "../services/ratelimiter.service";
 
 export class RateRecord {
-    ip: string;
-    route: string;
-    expiry: number;
+  ip: string;
+  route: string;
+  expiry: number;
 
-    constructor(ip: string, route: string, expiry: number) {
-      this.ip = ip;
-      this.route = route;
-      this.expiry = expiry;
-    }
+  constructor(ip: string, route: string, expiry: number) {
+    this.ip = ip;
+    this.route = route;
+    this.expiry = expiry;
+  }
 }
 
-export const rateLimiter = async (req : Request, res : Response, next : NextFunction) => {
+export const rateLimiter = async (
+  req: any,
+  res: Response,
+  next: NextFunction,
+) => {
   const currentRoute = req.url;
   const rateModel = new RateModel();
-  const rate = await rateModel.findOneByRoute(currentRoute);
+  const rateRule = await rateModel.findOneByRoute(currentRoute);
 
-  if (!rate) {
+  if (!rateRule) {
     return next();
   }
 
-  const rateLimiter = new RateLimiterService();
-  const ip = req.ip as string;
-  const rateObject = new RateRecord(ip, currentRoute, rate.windowSeconds);
+  req.log.info(`Rate limit for ${currentRoute}: ${rateRule.requestsAllowed}`);
 
-  if (rate) {
+  const rateLimiter = new RateLimiterService(req.redisClient);
+  const ip = req.ip as string;
+  const rateObject = new RateRecord(ip, currentRoute, rateRule.windowSeconds);
+
+  if (rateRule) {
     await rateLimiter.addUserToAccessRecord(rateObject);
 
     const exceeded = await rateLimiter.isRateLimitExceeded(
-        rateObject,
-        rate.requestsAllowed
+      rateObject,
+      rateRule.requestsAllowed,
     );
 
     if (exceeded) {

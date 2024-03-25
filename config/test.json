@@ -3,12 +3,14 @@
         {
             "requestsAllowed": 5,
             "routeRegex": "/api/*",
-            "windowSeconds": 60
+            "windowSeconds": 60,
+            "group": "unauthenticated"
         },
         {
             "requestsAllowed": 1,
             "routeRegex": "/admin/*",
-            "windowSeconds": 60
+            "windowSeconds": 60,
+            "group": "unauthenticated"
         }
     ]
 }

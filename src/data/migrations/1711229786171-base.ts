@@ -5,7 +5,7 @@ export class Base1711229786171 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE \`rate_limit\` (\`id\` int NOT NULL AUTO_INCREMENT, \`windowSeconds\` int NOT NULL, \`requestsAllowed\` int NOT NULL, \`routeRegex\` varchar(255) NOT NULL, \`ruleExpiry\` timestamp NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
+      `CREATE TABLE \`rate_limit\` (\`id\` int NOT NULL AUTO_INCREMENT, \`windowSeconds\` int NOT NULL, \`requestsAllowed\` int NOT NULL, \`routeRegex\` varchar(255) NOT NULL, \`ruleExpiry\` timestamp NULL, \`group\` varchar(255) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`,
     );
   }
 

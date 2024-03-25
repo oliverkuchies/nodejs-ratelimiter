@@ -20,4 +20,7 @@ export class RateLimit extends BaseEntity {
 
   @Column({ type: "timestamp", nullable: true })
   ruleExpiry!: Date;
+
+  @Column()
+  group!: string;
 }

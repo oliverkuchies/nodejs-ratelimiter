@@ -20,11 +20,6 @@ services:
           - default
         volumes:
           - ./tmp:/var/lib/mysql/
-        healthcheck:
-          test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
-          interval: 10s
-          timeout: 5s
-          retries: 5
       
     redis:
         container_name: ratelimiter-redis
@@ -46,9 +41,14 @@ services:
         networks:
           - default
         depends_on:
-            mysql:
-              condition: service_healthy
+            - mysql
+            - redis
         command: bash ./src/run.sh
+        healthcheck:
+          test: ["CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root' ]
+          interval: 30s
+          timeout: 10s
+          retries: 5
   
 networks:
   default:

@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 import { DataSource } from "typeorm";
+import { createClient } from "redis";
 
 if (process.env.NODE_ENV === "test") {
   config({ path: ".env.test" });
@@ -18,3 +19,9 @@ export default new DataSource({
   migrations: [__dirname + "/migrations/*.ts"],
   synchronize: false,
 });
+
+const redisClient = createClient({
+  url: `redis://:@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+});
+
+export { redisClient };

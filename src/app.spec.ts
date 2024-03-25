@@ -1,6 +1,12 @@
 import request from "supertest";
+import { redisClient } from "./data/datasource";
 
 const rootURL = "http://localhost:3000";
+
+beforeAll(async () => {
+  await redisClient.connect();
+  await redisClient.flushAll();
+});
 
 it("responds with json", function (done) {
   const calls = 6;

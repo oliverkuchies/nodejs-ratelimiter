@@ -12,6 +12,7 @@ describe("Rate Limiter Middleware", () => {
   beforeAll(async () => {
     await dataSource.initialize();
     await redisClient.connect();
+    await redisClient.flushAll();
     request.redisClient = redisClient;
   });
 

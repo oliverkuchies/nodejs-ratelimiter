@@ -27,17 +27,15 @@ export const rateLimiter = async (
     return next();
   }
 
-  req.log.info(`Rate limit for ${currentRoute}: ${rateRule.requestsAllowed}`);
-
   const rateLimiter = new RateLimiterService(req.redisClient);
   const ip = req.ip as string;
   const rateObject = new RateRecord(ip, currentRoute, rateRule.windowSeconds);
 
   if (rateRule) {
     await rateLimiter.addUserToAccessRecord(rateObject);
-
+    const accessRecords = await rateLimiter.getAccessLogRecords(rateObject);
     const exceeded = await rateLimiter.isRateLimitExceeded(
-      rateObject,
+      accessRecords,
       rateRule.requestsAllowed,
     );
 

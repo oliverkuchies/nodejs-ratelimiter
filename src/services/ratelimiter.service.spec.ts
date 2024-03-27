@@ -37,12 +37,16 @@ describe("Rate Limiter Middleware", () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
     }
 
+    const accessRecords =
+      await rateLimiterService.getAccessLogRecords(rateRecord);
+
     expect(
-      await rateLimiterService.isRateLimitExceeded(rateRecord, 40),
+      await rateLimiterService.isRateLimitExceeded(accessRecords, 40),
     ).toEqual(true);
   });
 
   afterAll(() => {
     redisClient.flushAll();
+    dataSource.destroy();
   });
 });

@@ -9,7 +9,13 @@ const port = 3000;
 const connectMethods = [AppDataSource.initialize(), redisClient.connect()];
 
 Promise.all(connectMethods).then(() => {
-  app.use(logger());
+  app.use(
+    logger({
+      transport: {
+        target: "pino-pretty",
+      },
+    }),
+  );
 
   app.use((req, res, next) => {
     (req as any).redisClient = redisClient;
@@ -22,7 +28,7 @@ Promise.all(connectMethods).then(() => {
     res.send("Hello World!");
   });
 
-  app.get("/dapi/hello", (req: Request, res: Response) => {
+  app.get("/another-route/hello", (req: Request, res: Response) => {
     res.send("Hello World!");
   });
 

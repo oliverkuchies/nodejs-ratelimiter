@@ -22,6 +22,10 @@ Promise.all(connectMethods).then(() => {
     res.send("Hello World!");
   });
 
+  app.get("/dapi/hello", (req: Request, res: Response) => {
+    res.send("Hello World!");
+  });
+
   app.get("/admin/hello", (req: Request, res: Response) => {
     res.send("Hello World!");
   });
